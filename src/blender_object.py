@@ -14,6 +14,9 @@ from .dem_layer import *
 from .map_layer import *
 from .map_uv import map_uv_lookup, uv_calc
 
+def tr(key : str) -> str:
+    return bpy.app.translations.pgettext(key)
+
 def build_blender_object(dem_layers : list, map_layers : list, proj : any, status_callback : callable) -> None:
     """
     Builds a Blender object from DEM and MAP layers.
@@ -47,9 +50,9 @@ def build_blender_object(dem_layers : list, map_layers : list, proj : any, statu
         # Create and link material shader
         material = bpy.data.materials.new(f'pt_material_z{z:02d}')
         material.use_nodes = True
-        mshader = material.node_tree.nodes['Principled BSDF']
+        mshader = material.node_tree.nodes[tr('Principled BSDF')]
         mshader.inputs['Roughness'].default_value = 1.0
-        texture = material.node_tree.nodes.new('ShaderNodeTexImage')
+        texture = material.node_tree.nodes.new(tr('ShaderNodeTexImage'))
         texture.image = image
         texture.location.x -= 600
         texture.location.y += 100
@@ -81,7 +84,7 @@ def build_blender_object(dem_layers : list, map_layers : list, proj : any, statu
 
         # Create new BMesh and UV layer
         bm = bmesh.new()
-        uv_layer = bm.loops.layers.uv.new('UVMap')
+        uv_layer = bm.loops.layers.uv.new(tr('UVMap'))
 
         # Project and create mesh vertices
         index = 0
